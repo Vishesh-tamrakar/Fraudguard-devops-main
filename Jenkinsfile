@@ -78,18 +78,23 @@ pipeline {
         stage('Docker Push') {
             steps {
                 sh '''
-                    echo "Retrieving Docker Hub credentials from Vault..."
-                    # Diagnostics
-                    which vault || find / -name vault || echo "Vault not found"
-                    chmod +x /usr/bin/vault || true
+                    echo "Retrieving Docker Hub credentials from Vault API..."
+                    # Install jq for parsing API response
+                    apt-get install -y jq
                     
-                    # Connection check
-                    curl -s -f ${VAULT_ADDR}/v1/sys/health || echo "WARNING: Cannot reach Vault at ${VAULT_ADDR}"
+                    # Fetching from Vault KV V2 API
+                    VAULT_RESPONSE=$(curl -s -H "X-Vault-Token: ${VAULT_TOKEN}" ${VAULT_ADDR}/v1/secret/data/dockerhub)
                     
-                    export DOCKER_USER=$(vault kv get -field=username secret/dockerhub)
-                    export DOCKER_PASS=$(vault kv get -field=password secret/dockerhub)
+                    export DOCKER_USER=$(echo $VAULT_RESPONSE | jq -r .data.data.username)
+                    export DOCKER_PASS=$(echo $VAULT_RESPONSE | jq -r .data.data.password)
                     
-                    echo "Logging in to Docker Hub..."
+                    if [ -z "$DOCKER_USER" ] || [ "$DOCKER_USER" == "null" ]; then
+                        echo "ERROR: Could not retrieve Docker username from Vault"
+                        echo "API Response: $VAULT_RESPONSE"
+                        exit 1
+                    fi
+                    
+                    echo "Logging in to Docker Hub as $DOCKER_USER..."
                     echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
                     
                     echo "Pushing images..."
