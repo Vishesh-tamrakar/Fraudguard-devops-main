@@ -135,7 +135,7 @@ pipeline {
                     kubectl apply -f k8s/hpa.yaml
                     
                     # Update image to the one we just built
-                    kubectl set image deployment/fraudguard-app fraudguard=28vishesh/fraudguard:${GIT_COMMIT_SHORT}
+                    kubectl set image deployment/fraudguard-app fraudguard-api=28vishesh/fraudguard:${GIT_COMMIT_SHORT}
                     
                     echo "Waiting for rollout..."
                     kubectl rollout status deployment/fraudguard-app --timeout=60s
