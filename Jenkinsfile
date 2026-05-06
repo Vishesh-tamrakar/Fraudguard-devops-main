@@ -56,7 +56,7 @@ pipeline {
                     echo "Building Docker image..."
                     sh '''
                         # FR-024: Build Docker image with multiple tags
-                        docker build -t fraudguard:latest -t fraudguard:${GIT_COMMIT_SHORT} .
+                        docker build -t fraudguard:latest -t fraudguard:${GIT_COMMIT_SHORT} -f docker/Dockerfile .
                         docker image inspect fraudguard:latest > /dev/null && echo "✓ Docker image built successfully"
                     '''
                 }
