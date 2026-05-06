@@ -158,16 +158,15 @@ pipeline {
                         # For Minikube on Docker driver, localhost usually works if port-forwarded, 
                         # but we use the NodePort directly here.
                         
-                        NODEPORT=$(kubectl get service fraudguard-service -o jsonpath='{.spec.ports[0].nodePort}')
-                        # On ScaDS1 with Minikube docker driver, we might need minikube ip
-                        # But for this simulation, we'll try to reach it via the NodePort on localhost
+                        # Get the NodePort and the Node IP
+                        NODEPORT=$(kubectl get service fraudguard-app -o jsonpath='{.spec.ports[0].nodePort}')
+                        NODEIP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}')
                         
-                        echo "Targeting NodePort: $NODEPORT"
+                        echo "Targeting API at: http://$NODEIP:$NODEPORT"
                         
                         # Run Newman
-                        # We use --env-var to set the base_url dynamically
                         newman run tests/postman/FraudGuard.postman_collection.json \
-                          --env-var base_url=http://127.0.0.1:$NODEPORT \
+                          --env-var base_url=http://$NODEIP:$NODEPORT \
                           --reporters cli
                     '''
                 }
