@@ -2,14 +2,14 @@ pipeline {
     agent {
         docker {
             image 'python:3.12-slim'
-            args '-u root:root -v /var/run/docker.sock:/var/run/docker.sock -v /home/vishesh/.kube:/root/.kube -v /home/vishesh/.minikube:/home/vishesh/.minikube'
+            args '-u root:root --network host -v /var/run/docker.sock:/var/run/docker.sock -v /home/vishesh/.kube:/root/.kube -v /home/vishesh/.minikube:/home/vishesh/.minikube'
         }
     }
 
     environment {
         PYTHONUNBUFFERED = '1'
         PYTHONDONTWRITEBYTECODE = '1'
-        VAULT_ADDR = 'http://172.17.0.1:8200' 
+        VAULT_ADDR = 'http://127.0.0.1:8200' 
         VAULT_TOKEN = 'root'
     }
 
@@ -167,7 +167,7 @@ pipeline {
                         # Run Newman
                         # We use --env-var to set the base_url dynamically
                         newman run tests/postman/FraudGuard.postman_collection.json \
-                          --env-var base_url=http://localhost:$NODEPORT \
+                          --env-var base_url=http://127.0.0.1:$NODEPORT \
                           --reporters cli
                     '''
                 }
