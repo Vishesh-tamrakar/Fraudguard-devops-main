@@ -288,13 +288,5 @@ python app/train.py --data-dir data --output app/model.pkl
 minikube ssh "sudo sysctl -w vm.max_map_count=262144"
 ```
 
----
-
-## Documentation
-
-- **Full Guide**: See comprehensive README sections above
-- **SRS Alignment**: [SRS_VERIFICATION_REPORT.md](SRS_VERIFICATION_REPORT.md)
-- **Implementation Plan**: [IMPLEMENTATION_ROADMAP.md](IMPLEMENTATION_ROADMAP.md)
-- **API Docs**: http://localhost:8000/docs (Swagger UI)
 
 

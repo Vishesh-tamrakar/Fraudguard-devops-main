@@ -20,3 +20,9 @@ FraudGuard_Final_Report.aux
 FraudGuard_Final_Report.log
 FraudGuard_Final_Report.out
 FraudGuard_Final_Report.toc
+
+# Additional Files to Ignore
+FinalProjectGuidelinesAndEvaluationCriteria.pdf
+IMPLEMENTATION_ROADMAP.md
+SRS_VERIFICATION_REPORT.md
+ngrok.log
