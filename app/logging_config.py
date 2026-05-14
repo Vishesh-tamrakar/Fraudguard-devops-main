@@ -73,7 +73,14 @@ def setup_logging() -> logging.Logger:
             os.makedirs(log_dir, exist_ok=True)
             log_file = os.path.join(log_dir, "fraud.log")
 
-    file_handler = logging.FileHandler(log_file)
+    try:
+        file_handler = logging.FileHandler(log_file)
+    except PermissionError:
+        log_dir = os.path.join(os.path.dirname(__file__), "logs")
+        os.makedirs(log_dir, exist_ok=True)
+        log_file = os.path.join(log_dir, "fraud.log")
+        file_handler = logging.FileHandler(log_file)
+
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(formatter)
     logger.addHandler(file_handler)
